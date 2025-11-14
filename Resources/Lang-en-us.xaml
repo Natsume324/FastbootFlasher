@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"                   
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="WindowTitle">Madara•FastbootFlasher</sys:String>
+    <sys:String x:Key="Main">🏠Main</sys:String>
+    <sys:String x:Key="Func">🛠Function</sys:String>
+    <sys:String x:Key="Settings">⚙️Settings</sys:String>
+    <sys:String x:Key="About">ℹ️About</sys:String>
+    <sys:String x:Key="Lang">Languages:</sys:String>
+    <sys:String x:Key="Num">Num</sys:String>
+    <sys:String x:Key="Part">Partitions</sys:String>
+    <sys:String x:Key="Size">Size</sys:String>
+    <sys:String x:Key="Source">SourceFile</sys:String>
+    <sys:String x:Key="Flash">Flash</sys:String>
+    <sys:String x:Key="Reboot">Reboot</sys:String>
+    <sys:String x:Key="Load">Load</sys:String>
+    <sys:String x:Key="Log">Log</sys:String>
+    <sys:String x:Key="Firmware">Firmware Files</sys:String>
+    <sys:String x:Key="SelectFile">Select Files</sys:String>
+</ResourceDictionary>

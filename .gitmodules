@@ -1,0 +1,3 @@
+[submodule "APPLibrary"]
+	path = APPLibrary
+	url = https://github.com/Natsume324/APPLibrary
