@@ -1,0 +1,116 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\桌面\\C#\\FBF\\FastbootFlasher\\FastbootFlasher.csproj": {}
+  },
+  "projects": {
+    "D:\\桌面\\C#\\FBF\\APPLibrary\\APPLibrary\\APPLibrary.csproj": {
+      "restore": {
+        "projectUniqueName": "D:\\桌面\\C#\\FBF\\APPLibrary\\APPLibrary\\APPLibrary.csproj",
+        "projectName": "APPLibrary",
+        "projectPath": "D:\\桌面\\C#\\FBF\\APPLibrary\\APPLibrary\\APPLibrary.csproj",
+        "UsingMicrosoftNETSdk": false,
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "D:\\桌面\\C#\\FBF\\FastbootFlasher\\FastbootFlasher.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\桌面\\C#\\FBF\\FastbootFlasher\\FastbootFlasher.csproj",
+        "projectName": "FastbootFlasher",
+        "projectPath": "D:\\桌面\\C#\\FBF\\FastbootFlasher\\FastbootFlasher.csproj",
+        "packagesPath": "C:\\Users\\Natsume324\\.nuget\\packages\\",
+        "outputPath": "D:\\桌面\\C#\\FBF\\FastbootFlasher\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Natsume324\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {
+              "D:\\桌面\\C#\\FBF\\APPLibrary\\APPLibrary\\APPLibrary.csproj": {
+                "projectPath": "D:\\桌面\\C#\\FBF\\APPLibrary\\APPLibrary\\APPLibrary.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "Google.Protobuf": {
+              "target": "Package",
+              "version": "[3.33.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

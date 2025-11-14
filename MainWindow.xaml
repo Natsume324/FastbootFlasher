@@ -99,6 +99,7 @@
             </Grid>
         </TabItem>
         <TabItem Header="{DynamicResource Func}">
+
         </TabItem>
         <TabItem Header="{DynamicResource Settings}">
             <Grid>

@@ -12,4 +12,8 @@
     <PackageReference Include="Google.Protobuf" Version="3.33.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\APPLibrary\APPLibrary\APPLibrary.csproj" />
+  </ItemGroup>
+
 </Project>

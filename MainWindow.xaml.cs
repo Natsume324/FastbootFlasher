@@ -77,7 +77,6 @@ namespace FastbootFlasher
                             foreach (var p in parsed)
                                 Partitions.Add(p);
                         }
-                        break;
                     }
                     else if(FileName.EndsWith(".bin"))
                     {
@@ -89,7 +88,6 @@ namespace FastbootFlasher
                                 foreach (var p in parsed)
                                     Partitions.Add(p);
                             }
-                            break;
                         }
                         else if(PayloadBin.IsPayloadBin(FileName))
                         {
@@ -98,9 +96,7 @@ namespace FastbootFlasher
                             {
                                 foreach (var p in parsed)
                                     Partitions.Add(p);
-                            }
-                            break;
-                              
+                            }         
                         }
                     }
                     else if (FileName.EndsWith(".APP") || FileName.EndsWith(".app"))
