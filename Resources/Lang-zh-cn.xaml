@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="WindowTitle">斑•Fastboot刷写者</sys:String>
+    <sys:String x:Key="Main">🏠主页</sys:String>
+    <sys:String x:Key="Func">🛠功能</sys:String>
+    <sys:String x:Key="Settings">⚙️设置</sys:String>
+    <sys:String x:Key="About">ℹ️关于</sys:String>
+    <sys:String x:Key="Lang">语言:</sys:String>
+    <sys:String x:Key="Num">序号</sys:String>
+    <sys:String x:Key="Part">分区</sys:String>
+    <sys:String x:Key="Size">大小</sys:String>
+    <sys:String x:Key="Source">源文件</sys:String>
+    <sys:String x:Key="Flash">刷写</sys:String>
+    <sys:String x:Key="Reboot">重启</sys:String>
+    <sys:String x:Key="Load">加载</sys:String>
+    <sys:String x:Key="Log">日志</sys:String>
+    <sys:String x:Key="Firmware">固件文件</sys:String>
+    <sys:String x:Key="SelectFile">选择文件</sys:String>
+</ResourceDictionary>
