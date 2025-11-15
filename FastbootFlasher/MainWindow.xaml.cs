@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using FastbootCS;
 
 
 namespace FastbootFlasher
@@ -22,6 +23,7 @@ namespace FastbootFlasher
     public partial class MainWindow : Window
     {
         public ObservableCollection<Partition> Partitions { get; set; }
+        public FirmwareType CurrentFirmwareType { get; set; }
         public MainWindow()
         {
             InitializeComponent();
@@ -69,6 +71,7 @@ namespace FastbootFlasher
                 for (int i=0;i< openFileDialog.FileNames.Length; i++)
                 {
                     Log_Box.Text+=(string)FindResource("LoadFile") +FileNames[i] + "\n";
+                    Log_Box.ScrollToEnd();
                     FilePath_Box.Text += FileNames[i] + "\n";
                     if (FileNames[i].EndsWith(".bat"))
                     {
@@ -78,6 +81,7 @@ namespace FastbootFlasher
                             foreach (var p in parsed)
                                 Partitions.Add(p);
                         }
+                        CurrentFirmwareType = FirmwareType.BatFile;
                         break;
                     }
                     else if (FileNames[i].EndsWith(".bin")&&(UpdateBin.IsUpdateBin(FileNames[i])|| PayloadBin.IsPayloadBin(FileNames[i])))
@@ -90,6 +94,7 @@ namespace FastbootFlasher
                                 foreach (var p in parsed)
                                     Partitions.Add(p);
                             }
+                            CurrentFirmwareType = FirmwareType.UpdateBin;
                             break;
                         }
                         else if (PayloadBin.IsPayloadBin(FileNames[i]))
@@ -100,6 +105,7 @@ namespace FastbootFlasher
                                 foreach (var p in parsed)
                                     Partitions.Add(p);
                             }
+                            CurrentFirmwareType = FirmwareType.PayloadBin;
                             break;
                         }
                     }
@@ -111,18 +117,141 @@ namespace FastbootFlasher
                             foreach (var p in parsed)
                                 Partitions.Add(p);
                         }
+                        CurrentFirmwareType = FirmwareType.UpdateApp;
                     }
                     else
                     {
-                        Partitions.Add(ImageFile.ParseImage(FileNames[i],i));      
+                        Partitions.Add(ImageFile.ParseImage(FileNames[i],i));    
+                        CurrentFirmwareType = FirmwareType.Image;
                     }
                 }
             }
         }
 
-        private void Flash_Btn_Click(object sender, RoutedEventArgs e)
+        private async void Flash_Btn_Click(object sender, RoutedEventArgs e)
         {
+            var devices = Fastboot.GetDevices();
+            if (Log_Box.Text=="")
+            {
+                MessageBox.Show((string)FindResource("NoFileLoaded"), (string)FindResource("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            else if(PartitionDataGrid.SelectedItems.Count==0)
+            {
+                MessageBox.Show((string)FindResource("NoPartitionSelected"), (string)FindResource("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            else if (devices.Length == 0 || devices.Length > 1)
+            {
+                MessageBox.Show((string)FindResource("DeviceError"), (string)FindResource("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
+            Log_Box.Text += (string)FindResource("DetectDevice") + devices[0]+"\n";
+            var fb = new Fastboot(devices[0]);
+            Log_Box.Text += (string)FindResource("ConnectDevice") + "\n";
+            fb.Connect(); 
+            Log_Box.Text += (string)FindResource("ConnectSuccess") + "\n";
+            var progress = new Progress<double>(value =>
+            {
+                progressBar.Value = value;
+                progressText.Text = $"{value:F1}%";
+                if (value >= 100)
+                {
+                    progressText.Text = "100%";
+                }
+            });
+            var sum = PartitionDataGrid.SelectedItems.Count;
+            int okay = 0;
+            int fail = 0;
+            string[] failParts = [];
+            switch (CurrentFirmwareType)
+            {
+                case FirmwareType.BatFile:  
+                    foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+                    {
+                        Fastboot.Response respone=await fb.FlashPartition(item.Name, item.SourceFile, progress);
+                        Log_Box.Text += string.Format((string)FindResource("FlashingPartition"), item.Name)+"   ";
+                        if (respone.Status==Fastboot.Status.OKAY)
+                        {
+                            Log_Box.Text += (string)FindResource("Successful")+"\n";
+                            okay++;
+                        }
+                        else
+                        {
+                            Log_Box.Text += (string)FindResource("Failed") +"\n";
+                            fail++;
+                            failParts.Append(item.Name);
+                        } 
+                        Log_Box.ScrollToEnd();
+                    }
+                    break;
+                case FirmwareType.UpdateBin:
+                    foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+                    {
+                        Fastboot.Response respone = await fb.FlashPartition(item.Name, item.SourceFile, progress);
+                        Log_Box.Text += string.Format((string)FindResource("FlashingPartition"), item.Name) + "   ";
+                        if (respone.Status == Fastboot.Status.OKAY)
+                        {
+                            Log_Box.Text += (string)FindResource("Successful") + "\n";
+                            okay++;
+                        }
+                        else
+                        {
+                            Log_Box.Text += (string)FindResource("Failed") + "\n";
+                            fail++;
+                            failParts.Append(item.Name);
+                        }
+                        Log_Box.ScrollToEnd();
+                    }
+                    break;
+                //case FirmwareType.PayloadBin:
+                //    PayloadBin.FlashPayloadBin(fb, Partitions, Log_Box, FindResource);
+                //    break;
+                //case FirmwareType.UpdateApp:
+                //    UpdateApp.FlashUpdateApp(fb, Partitions, Log_Box, FindResource);
+                //    break;
+                //case FirmwareType.Image:
+                //    ImageFile.FlashImageFiles(fb, Partitions, Log_Box, FindResource);
+                //    break;
+                default:
+                    MessageBox.Show((string)FindResource("UnknownFirmwareType"), (string)FindResource("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+            }
+            Log_Box.Text += string.Format((string)FindResource("FlashStatistic"), sum, okay, fail) + "\n";
+            Log_Box.Text += (string)FindResource("FlashFailPart") + "\n";
+            foreach (var failPart in failParts)
+            {
+                Log_Box.Text += failPart + "\n";
+                Log_Box.ScrollToEnd();
+            }
+            fb.Disconnect();
+            Log_Box.ScrollToEnd();
+
+        }
+
+        private async void ExtractSelectedPart_Click(object sender, RoutedEventArgs e)
+        {
+            var progress = new Progress<double>(value =>
+            {
+                progressBar.Value = value;
+                progressText.Text = $"{value:F1}%";
+                if (value >= 100)
+                {
+                    progressText.Text = "100%";
+                }
+            });
+            Directory.CreateDirectory("images");
+            if (PartitionDataGrid.SelectedItems.Count == 0)
+            {
+                MessageBox.Show((string)FindResource("NoPartitionSelected"), (string)FindResource("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+            {
+                await UpdateBin.ExtractPartitionImage(item.Name, item.SourceFile, @".\images\"+item.Name + ".img", progress);
+                
+            }
         }
     }
     public class Partition : INotifyPropertyChanged
@@ -149,4 +278,12 @@ namespace FastbootFlasher
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+    public enum FirmwareType
+    {
+        Image,
+        UpdateBin,
+        PayloadBin,
+        UpdateApp,
+        BatFile
+    }   
 }

@@ -23,18 +23,23 @@
                        
                     </Grid.RowDefinitions>
 
-             <DataGrid x:Name="PartitionDataGrid"
-              Grid.Row="0"
-              ItemsSource="{Binding Partitions}"
-              AutoGenerateColumns="False"
-              CanUserAddRows="False"
-              CanUserDeleteRows="False"
-              CanUserSortColumns="False"
-              HeadersVisibility="Column"
-              GridLinesVisibility="None"
-              RowBackground="Transparent"
-              AlternatingRowBackground="#F8F8F8"
-              SelectionUnit="FullRow">
+   <DataGrid x:Name="PartitionDataGrid"
+          Grid.Row="0"
+          ItemsSource="{Binding Partitions}"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          CanUserSortColumns="False"
+          HeadersVisibility="Column"
+          GridLinesVisibility="None"
+          RowBackground="Transparent"
+          AlternatingRowBackground="#F8F8F8"
+          SelectionUnit="FullRow">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{DynamicResource ExtractPart}" Click="ExtractSelectedPart_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="56" Binding="{Binding Index}" IsReadOnly="True" CanUserSort="False">
                                 <DataGridTextColumn.HeaderStyle>
@@ -43,7 +48,7 @@
                                     </Style>
                                 </DataGridTextColumn.HeaderStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Width="210" Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserSort="False">
+                            <DataGridTextColumn Width="180" Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserSort="False">
                                 <DataGridTextColumn.HeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="Content" Value="{DynamicResource Part}" />
@@ -57,7 +62,7 @@
                                     </Style>
                                 </DataGridTextColumn.HeaderStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Width="245" Binding="{Binding SourceFile}" IsReadOnly="True" CanUserSort="False">
+                            <DataGridTextColumn Width="275" Binding="{Binding SourceFile}" IsReadOnly="True" CanUserSort="False">
                                 <DataGridTextColumn.HeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="Content" Value="{DynamicResource Source}" />
@@ -84,12 +89,9 @@
                         <Button x:Name="Load_Btn" Grid.Column="1" Content="{DynamicResource Load}" Margin="5,0,0,0" Click="Load_Btn_Click" />
                     </Grid>
                     <!-- 进度条 -->
-                    <ProgressBar Grid.Row="3"
-                 Height="20"
-                 Minimum="0"
-                 Maximum="100"
-                 Value="{Binding Progress}"
-                 Margin="0,0,0,0"/>
+                    <ProgressBar x:Name="progressBar" Grid.Row="3" Height="20" Minimum="0" Maximum="100" Margin="0,0,0,0"/>
+                    <TextBlock x:Name="progressText" Grid.Row="3" Height="20" Text="0%" HorizontalAlignment="Center"/>
+
                 </Grid>
                 <GroupBox Grid.Column="1" Header="{DynamicResource Log}">
                     <TextBox x:Name="Log_Box" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>

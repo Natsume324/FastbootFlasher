@@ -18,4 +18,18 @@
     <sys:String x:Key="Firmware">固件文件</sys:String>
     <sys:String x:Key="SelectFile">选择文件</sys:String>
     <sys:String x:Key="LoadFile">已加载文件:</sys:String>
+    <sys:String x:Key="Error">错误</sys:String>
+    <sys:String x:Key="DeviceError">检测到零个或多个设备，请仅连接一个设备！</sys:String>
+    <sys:String x:Key="NoFileLoaded">没有加载固件，请先加载固件！</sys:String>
+    <sys:String x:Key="NoPartitionSelected">没有选择分区，请先选择分区！</sys:String>
+    <sys:String x:Key="DetectDevice">发现设备：</sys:String>
+    <sys:String x:Key="ConnectDevice">连接设备...</sys:String>
+    <sys:String x:Key="ConnectSuccess">连接成功！</sys:String>
+    <sys:String x:Key="UnknownFirmwareType">未知的固件类型！</sys:String>
+    <sys:String x:Key="FlashingPartition">正在刷入{0}分区...</sys:String>
+    <sys:String x:Key="Successful">成功✅️</sys:String>
+    <sys:String x:Key="Failed">失败❎️</sys:String>
+    <sys:String x:Key="FlashStatistic">总选中分区{0}，刷入成功{1}，刷入失败{2}！</sys:String>
+    <sys:String x:Key="FlashFailPart">以下分区刷入失败：</sys:String>
+    <sys:String x:Key="ExtractPart">提取选中分区</sys:String>
 </ResourceDictionary>

@@ -18,4 +18,18 @@
     <sys:String x:Key="Firmware">Firmware Files</sys:String>
     <sys:String x:Key="SelectFile">Select Files</sys:String>
     <sys:String x:Key="LoadFile">Loaded files:</sys:String>
+    <sys:String x:Key="Error">Error</sys:String>
+    <sys:String x:Key="DeviceError">Zero or more devices have been detected. Please connect only one device!</sys:String>
+    <sys:String x:Key="NoFileLoaded">Firmware not loaded, please load firmware first!</sys:String>
+    <sys:String x:Key="NoPartitionSelected">No partitions have been selected yet. Please select partitions first!</sys:String>
+    <sys:String x:Key="DetectDevice">Device detected:</sys:String>
+    <sys:String x:Key="ConnectDevice">Connecting devices...</sys:String>
+    <sys:String x:Key="ConnectSuccess">Connection successful!</sys:String>
+    <sys:String x:Key="UnknownFirmwareType">Unknown firmware type!</sys:String>
+    <sys:String x:Key="FlashingPartition">Flashing partition {0}...</sys:String>
+    <sys:String x:Key="Successful">Successful✅️</sys:String>
+    <sys:String x:Key="Failed">Failed❎️</sys:String>
+    <sys:String x:Key="FlashStatistic">Partition selected {0}, flashing successful {1}, flashing failed {2}!</sys:String>
+    <sys:String x:Key="FlashFailPart">The following partitions failed to be flashed:</sys:String>
+    <sys:String x:Key="ExtractPart">Extract selected partition</sys:String>
 </ResourceDictionary>
