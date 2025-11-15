@@ -1,3 +1,6 @@
 [submodule "APPLibrary"]
 	path = APPLibrary
 	url = https://github.com/Natsume324/APPLibrary
+[submodule "FastbootCS"]
+	path = FastbootCS
+	url = https://github.com/Natsume324/FastbootCS
