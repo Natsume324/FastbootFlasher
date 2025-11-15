@@ -17,4 +17,5 @@
     <sys:String x:Key="Log">日志</sys:String>
     <sys:String x:Key="Firmware">固件文件</sys:String>
     <sys:String x:Key="SelectFile">选择文件</sys:String>
+    <sys:String x:Key="LoadFile">已加载文件:</sys:String>
 </ResourceDictionary>

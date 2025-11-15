@@ -4,16 +4,22 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FastbootFlasher
 {
     internal class ImageFile
     {
-        public static ObservableCollection<Partition> ParseImage(string filePath)
+        public static Partition ParseImage(string filePath,int index)
         {
-
-            return new ObservableCollection<Partition>();
+            return new Partition()
+            {
+                Index=index+1,
+                Name= Path.GetFileNameWithoutExtension(filePath),
+                Size= ImageFile.FormatImageSize(new FileInfo(filePath).Length),
+                SourceFile=filePath
+            };
         }
 
         public static string FormatImageSize(long size)

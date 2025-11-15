@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APPLibrary\APPLibrary\APPLibrary.csproj" />
+    <ProjectReference Include="..\FastbootCS\FastbootCS.csproj" />
   </ItemGroup>
 
 </Project>

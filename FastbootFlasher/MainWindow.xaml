@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FastbootFlasher"
         mc:Ignorable="d"
         Title="{DynamicResource WindowTitle}" Height="610" Width="1024">
-    <TabControl FontSize="20">
+    <TabControl FontSize="16">
         <TabItem Header="{DynamicResource Main}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -43,7 +43,7 @@
                                     </Style>
                                 </DataGridTextColumn.HeaderStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Width="200" Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserSort="False">
+                            <DataGridTextColumn Width="210" Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CanUserSort="False">
                                 <DataGridTextColumn.HeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="Content" Value="{DynamicResource Part}" />
@@ -57,7 +57,7 @@
                                     </Style>
                                 </DataGridTextColumn.HeaderStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Width="270" Binding="{Binding SourceFile}" IsReadOnly="True" CanUserSort="False">
+                            <DataGridTextColumn Width="245" Binding="{Binding SourceFile}" IsReadOnly="True" CanUserSort="False">
                                 <DataGridTextColumn.HeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="Content" Value="{DynamicResource Source}" />
@@ -72,7 +72,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Content="{DynamicResource Flash}" Margin="0,0,5,0" />
+                        <Button x:Name="Flash_Btn" Grid.Column="0" Content="{DynamicResource Flash}" Margin="0,0,5,0" Click="Flash_Btn_Click" />
                         <Button Grid.Column="1" Content="{DynamicResource Reboot}" Margin="5,0,0,0" />
                     </Grid>
                     <Grid Grid.Row="2" Margin="0,5,0,5">
@@ -92,9 +92,8 @@
                  Margin="0,0,0,0"/>
                 </Grid>
                 <GroupBox Grid.Column="1" Header="{DynamicResource Log}">
-                    <TextBox x:Name="Log_Box" IsReadOnly="True">
-                        
-                    </TextBox>
+                    <TextBox x:Name="Log_Box" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+
                 </GroupBox>
             </Grid>
         </TabItem>

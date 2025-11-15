@@ -65,50 +65,64 @@ namespace FastbootFlasher
             };
             if(openFileDialog.ShowDialog() == true)
             {
-                
-                foreach (var FileName in openFileDialog.FileNames)
+                var FileNames = openFileDialog.FileNames;
+                for (int i=0;i< openFileDialog.FileNames.Length; i++)
                 {
-                    FilePath_Box.Text+= FileName + "\n";
-                    if (FileName.EndsWith(".bat"))
+                    Log_Box.Text+=(string)FindResource("LoadFile") +FileNames[i] + "\n";
+                    FilePath_Box.Text += FileNames[i] + "\n";
+                    if (FileNames[i].EndsWith(".bat"))
                     {
-                        var parsed = BatFile.ParseBat(FileName); 
+                        var parsed = BatFile.ParseBat(FileNames[i]);
+                        if (parsed != null)
+                        {
+                            foreach (var p in parsed)
+                                Partitions.Add(p);
+                        }
+                        break;
+                    }
+                    else if (FileNames[i].EndsWith(".bin")&&(UpdateBin.IsUpdateBin(FileNames[i])|| PayloadBin.IsPayloadBin(FileNames[i])))
+                    {
+                        if (UpdateBin.IsUpdateBin(FileNames[i]))
+                        {
+                            var parsed = UpdateBin.ParseUpdateBin(FileNames[i]);
+                            if (parsed != null)
+                            {
+                                foreach (var p in parsed)
+                                    Partitions.Add(p);
+                            }
+                            break;
+                        }
+                        else if (PayloadBin.IsPayloadBin(FileNames[i]))
+                        {
+                            var parsed = PayloadBin.ParsePayloadBin(FileNames[i]); ;
+                            if (parsed != null)
+                            {
+                                foreach (var p in parsed)
+                                    Partitions.Add(p);
+                            }
+                            break;
+                        }
+                    }
+                    else if (FileNames[i].EndsWith(".APP") || FileNames[i].EndsWith(".app"))
+                    {
+                        var parsed = UpdateApp.ParseUpdateApp(FileNames[i]);
                         if (parsed != null)
                         {
                             foreach (var p in parsed)
                                 Partitions.Add(p);
                         }
                     }
-                    else if(FileName.EndsWith(".bin"))
-                    {
-                        if(UpdateBin.IsUpdateBin(FileName))
-                        {
-                            var parsed = UpdateBin.ParseUpdateBin(FileName);
-                            if (parsed != null)
-                            {
-                                foreach (var p in parsed)
-                                    Partitions.Add(p);
-                            }
-                        }
-                        else if(PayloadBin.IsPayloadBin(FileName))
-                        {
-                            var parsed = PayloadBin.ParsePayloadBin(FileName); ;
-                            if (parsed != null)
-                            {
-                                foreach (var p in parsed)
-                                    Partitions.Add(p);
-                            }         
-                        }
-                    }
-                    else if (FileName.EndsWith(".APP") || FileName.EndsWith(".app"))
-                    {
-                        UpdateApp.ParseUpdateApp(FileName);
-                    }
                     else
                     {
-                        ImageFile.ParseImage(FileName);
+                        Partitions.Add(ImageFile.ParseImage(FileNames[i],i));      
                     }
                 }
             }
+        }
+
+        private void Flash_Btn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
     public class Partition : INotifyPropertyChanged

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="APPLibrary/APPLibrary/APPLibrary.csproj" Id="a34aa259-4277-41c9-8e21-700972de46a6" />
+  <Project Path="FastbootCS/FastbootCS.csproj" />
   <Project Path="FastbootFlasher/FastbootFlasher.csproj" />
 </Solution>

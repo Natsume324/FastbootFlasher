@@ -17,4 +17,5 @@
     <sys:String x:Key="Log">Log</sys:String>
     <sys:String x:Key="Firmware">Firmware Files</sys:String>
     <sys:String x:Key="SelectFile">Select Files</sys:String>
+    <sys:String x:Key="LoadFile">Loaded files:</sys:String>
 </ResourceDictionary>
