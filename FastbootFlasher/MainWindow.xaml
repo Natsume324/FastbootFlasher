@@ -78,7 +78,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button x:Name="Flash_Btn" Grid.Column="0" Content="{DynamicResource Flash}" Margin="0,0,5,0" Click="Flash_Btn_Click" />
-                        <Button Grid.Column="1" Content="{DynamicResource Reboot}" Margin="5,0,0,0" />
+                        <Button x:Name="Reboot_Btn" Grid.Column="1" Content="{DynamicResource Reboot}" Margin="5,0,0,0" Click="Reboot_Btn_Click" />
                     </Grid>
                     <Grid Grid.Row="2" Margin="0,5,0,5">
                         <Grid.ColumnDefinitions>

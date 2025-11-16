@@ -32,4 +32,7 @@
     <sys:String x:Key="FlashStatistic">Partition selected {0}, flashing successful {1}, flashing failed {2}!</sys:String>
     <sys:String x:Key="FlashFailPart">The following partitions failed to be flashed:</sys:String>
     <sys:String x:Key="ExtractPart">Extract selected partition</sys:String>
+    <sys:String x:Key="ExtractingPartition">Extracting partition {0}...</sys:String>
+    <sys:String x:Key="ExtractFinished">All selected partitions have been extracted to the images folder!</sys:String>
+    <sys:String x:Key="Disconnect">Disconnected</sys:String>
 </ResourceDictionary>

@@ -131,9 +131,9 @@ namespace FastbootFlasher
                 return (Stream?)null;
             }).ConfigureAwait(false);
         }
-        public static async Task<bool> ExtractPartitionImage(string partitionName, string filePath, string outputPath, IProgress<double> progress = null)
+        public static async Task<bool> ExtractPartitionImage(string partitionName, string filePath,IProgress<double> progress = null)
         {
-            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(partitionName) || string.IsNullOrEmpty(outputPath) || !File.Exists(filePath))
+            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(partitionName)  || !File.Exists(filePath))
                 return false;
 
             Stream src = null;
@@ -144,11 +144,11 @@ namespace FastbootFlasher
                     return false;
 
                 // Ensure output directory exists
-                var dir = Path.GetDirectoryName(outputPath);
+                var dir = Path.GetDirectoryName(@$".\images\{partitionName}.img");
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-                using var dest = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None, 262144, FileOptions.Asynchronous | FileOptions.SequentialScan);
+                using var dest = new FileStream(@$".\images\{partitionName}.img", FileMode.Create, FileAccess.Write, FileShare.None, 262144, FileOptions.Asynchronous | FileOptions.SequentialScan);
                 byte[] buffer = new byte[1024*1024];
                 int read;
                 while ((read = await src.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false)) > 0)

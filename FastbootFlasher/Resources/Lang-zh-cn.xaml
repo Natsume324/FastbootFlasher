@@ -32,4 +32,8 @@
     <sys:String x:Key="FlashStatistic">总选中分区{0}，刷入成功{1}，刷入失败{2}！</sys:String>
     <sys:String x:Key="FlashFailPart">以下分区刷入失败：</sys:String>
     <sys:String x:Key="ExtractPart">提取选中分区</sys:String>
+    <sys:String x:Key="ExtractingPartition">正在提取{0}分区...</sys:String>
+    <sys:String x:Key="ExtractFinished">所有选中分区已提取至images文件夹！</sys:String>
+    <sys:String x:Key="Disconnect">断开连接</sys:String>
+    <sys:String x:Key="RebootingDevice">重启设备...</sys:String>
 </ResourceDictionary>
