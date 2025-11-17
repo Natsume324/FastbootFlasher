@@ -28,7 +28,7 @@ namespace FastbootFlasher
         public MainWindow()
         {
             InitializeComponent();
-            SwitchLanguage("zh-cn");
+            SwitchLanguage("en-us");
             Partitions = new ObservableCollection<Partition>();
             DataContext = this;
         }
@@ -281,7 +281,7 @@ namespace FastbootFlasher
                     await PayloadBinExtractPart(progress);
                     break;
                 case FirmwareType.UpdateApp:
-                    
+                    await UpdateAppExtractPart(progress);
                     break;
                 default: 
                     break;
@@ -330,6 +330,26 @@ namespace FastbootFlasher
                 Log_Box.ScrollToEnd();
             }
             Log_Box.Text += "\n" + (string)FindResource("ExtractFinished")+"\n\r";
+            Log_Box.ScrollToEnd();
+        }
+        private async Task UpdateAppExtractPart(Progress<double> progress)
+        {
+            bool result;
+            foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+            {
+                Log_Box.Text += string.Format((string)FindResource("ExtractingPartition"), item.Name) + "   ";
+                result = await UpdateApp.ExtractPartitionImage(item.Name, item.SourceFile, progress);
+                if (result)
+                {
+                    Log_Box.Text += (string)FindResource("Successful") + "\n";
+                }
+                else
+                {
+                    Log_Box.Text += (string)FindResource("Failed") + "\n";
+                }
+                Log_Box.ScrollToEnd();
+            }
+            Log_Box.Text += "\n" + (string)FindResource("ExtractFinished") + "\n\r";
             Log_Box.ScrollToEnd();
         }
         private void EnableControl()
