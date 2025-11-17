@@ -36,13 +36,10 @@ namespace FastbootFlasher
             {
                 if (entry.FileType.ToLower() == partitionName)
                 {
-                    Directory.CreateDirectory(@"images");
                     try
                     {
-                        using var dataStream = entry.GetDataStream(filePath);
-                       
-                         return dataStream;
-                        
+                        var dataStream = entry.GetDataStream(filePath);
+                        return dataStream;
                     }
                     catch
                     {
@@ -63,6 +60,10 @@ namespace FastbootFlasher
                     Directory.CreateDirectory(@"images");
                     try
                     {
+                        if (partitionName == "hisiufs_gpt")
+                            partitionName = "ptable";
+                        else if (partitionName == "ufsfw")
+                            partitionName = "ufs_fw";
                         using var dataStream = entry.GetDataStream(filePath);
                         using var fs = new FileStream($@".\images\{partitionName}.img", FileMode.Create, FileAccess.Write);
                         {

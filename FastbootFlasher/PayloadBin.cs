@@ -47,7 +47,6 @@ namespace FastbootFlasher
             return Partitions;
         }
 
-        // 新增：并行提取分区的方法
         public static async Task<bool> ExtractPartitionImage(string partitionName, string filePath, IProgress<double> progress = null)
         {
             if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(partitionName) || !File.Exists(filePath))

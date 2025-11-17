@@ -1,5 +1,6 @@
 ﻿using FastbootCS;
 using Microsoft.Win32;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,16 +26,17 @@ namespace FastbootFlasher
     {
         public ObservableCollection<Partition> Partitions { get; set; }
         public FirmwareType CurrentFirmwareType { get; set; }
+        public string[] skipPartitions = ["sha256rsa", "crc", "curver", "verlist", "package_type", "base_verlist", "base_ver", "base_package_info", "ptable_cust", "cust_verlist", "cust_ver", "cust_package_info", "preload_verlist", "preload_ver", "preload_package_info", "ptable_preload", "board_list", "package_info", "permission_hash_bin"];
         public MainWindow()
         {
             InitializeComponent();
-            SwitchLanguage("en-us");
+            SwitchLanguage("zh-cn");
             Partitions = new ObservableCollection<Partition>();
             DataContext = this;
         }
        
        
-        private void SwitchLanguage(string culture)
+        private static void SwitchLanguage(string culture)
         {
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(
@@ -153,6 +155,7 @@ namespace FastbootFlasher
             Log_Box.Text += (string)FindResource("ConnectDevice") + "\n";
             fb.Connect();
             Log_Box.Text += (string)FindResource("ConnectSuccess") + "\n\r";
+            Log_Box.ScrollToEnd();
             var progress = new Progress<double>(value =>
             {
                 progressBar.Value = value;
@@ -161,84 +164,126 @@ namespace FastbootFlasher
                 {
                     progressText.Text = "100%";
                 }
-            });
-            var sum = PartitionDataGrid.SelectedItems.Count;
-            int okay = 0;
-            int fail = 0;
-            string[] failParts = [];
+            }); 
             DisableControl();
-            switch (CurrentFirmwareType)
+            await FlashPartitions(fb);
+            
+            Log_Box.Text += (string)FindResource("Disconnect") + "\n\r";
+            fb.Disconnect();
+            EnableControl();
+            Log_Box.ScrollToEnd();
+        }
+        private async Task FlashPartitions(Fastboot fb)
+        {
+            Fastboot.Response response;
+            var progress = new Progress<double>(value =>
             {
-                case FirmwareType.BatFile:
-                    foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+                progressBar.Value = value;
+                progressText.Text = $"{value:F1}%";
+                if (value >= 100) progressText.Text = "100%";
+            });
+
+            int okay = 0, fail = 0,sum=PartitionDataGrid.SelectedItems.Count;
+            List<string> failParts = [];
+
+            // PayloadBin 只需执行一次
+            if (CurrentFirmwareType == FirmwareType.PayloadBin)
+                await PayloadBinExtractPart(progress);
+
+            foreach (var part in PartitionDataGrid.SelectedItems.Cast<Partition>())
+            {
+                // 跳过分区
+                if (skipPartitions.Contains(part.Name))
+                {
+                    LogSuccess($"SkippingPartition", part.Name);
+                    okay++;
+                    continue;
+                }
+
+                Stream stream = null;
+                string flashName = part.Name;
+
+                try
+                {
+                    // ---- 分区流处理 ----
+                    switch (CurrentFirmwareType)
                     {
-                        Log_Box.Text += string.Format((string)FindResource("FlashingPartition"), item.Name) + "   ";
-                        Fastboot.Response respone = await fb.FlashPartition(item.Name, item.SourceFile, progress); 
-                        if (respone.Status == Fastboot.Status.OKAY)
-                        {
-                            Log_Box.Text += (string)FindResource("Successful") + "\n";
-                            okay++;
-                        }
-                        else
-                        {
-                            Log_Box.Text += (string)FindResource("Failed") + "\n";
-                            fail++;
-                            failParts.Append(item.Name);
-                        }
-                        Log_Box.ScrollToEnd();
+                        case FirmwareType.UpdateBin:
+                            stream = await UpdateBin.ExtractPartitionStream(flashName, part.SourceFile, progress);
+                            if(stream.Length > fb.GetMaxDownloadSize())
+                            {
+                                stream?.Close();
+                                stream?.Dispose();
+                                LogStart("ExtractingPartition", flashName);
+                                if (await UpdateBin.ExtractPartitionImage(flashName, part.SourceFile, progress))
+                                {
+                                    LogSuccess("Successful");
+                                }
+                                else
+                                {
+                                    LogFail("Failed");
+                                }
+                                part.SourceFile = @$".\images\{part.Name}.img";
+                            }
+                            break;
+                        case FirmwareType.UpdateApp:
+                            stream = await UpdateApp.ExtractPartitionStream(flashName, part.SourceFile);
+                            if (stream.Length > fb.GetMaxDownloadSize())
+                            {
+                                stream?.Close();
+                                stream?.Dispose();
+                                LogStart("ExtractingPartition", flashName);
+                                if (await UpdateApp.ExtractPartitionImage(flashName, part.SourceFile, progress))
+                                {
+                                    LogSuccess("Successful");
+                                }
+                                else
+                                {
+                                    LogFail("Failed");
+                                }
+                                part.SourceFile = @$".\images\{part.Name}.img";
+                            }
+                            flashName = flashName switch
+                            {
+                                "hisiufs_gpt" => "ptable",
+                                "ufsfw" => "ufs_fw",
+                                _ => flashName
+                            };
+                            break;
+
+                        case FirmwareType.PayloadBin:
+                            part.SourceFile = @$".\images\{part.Name}.img";
+                            break;
                     }
-                    break;
-                case FirmwareType.UpdateBin:
-                    foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+
+                    // ---- 执行刷写 ----
+                    LogStart("FlashingPartition", flashName);
+
+                    response = stream != null&& stream.Length < fb.GetMaxDownloadSize()
+                        ? await fb.FlashPartition(flashName, stream, progress)
+                        : await fb.FlashPartition(flashName, part.SourceFile, progress);
+
+                    if (response.Status == Fastboot.Status.OKAY)
                     {
-                        Log_Box.Text += string.Format((string)FindResource("FlashingPartition"), item.Name) + "   ";
-                        Fastboot.Response respone = await fb.FlashPartition(item.Name, item.SourceFile, progress);
-                        if (respone.Status == Fastboot.Status.OKAY)
-                        {
-                            Log_Box.Text += (string)FindResource("Successful") + "\n";
-                            okay++;
-                        }
-                        else
-                        {
-                            Log_Box.Text += (string)FindResource("Failed") + "\n";
-                            fail++;
-                            failParts.Append(item.Name);
-                        }
-                        Log_Box.ScrollToEnd();
+                        LogSuccess("Successful");
+                        okay++;
                     }
-                    break;
-                case FirmwareType.PayloadBin:
-                    await PayloadBinExtractPart(progress);
-                    foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
+                    else
                     {
-                        Log_Box.Text += string.Format((string)FindResource("FlashingPartition"), item.Name) + "   ";
-                        Fastboot.Response respone = await fb.FlashPartition(item.Name, @$".\images\{item.Name}.img", progress);
-                        if (respone.Status == Fastboot.Status.OKAY)
-                        {
-                            Log_Box.Text += (string)FindResource("Successful") + "\n";
-                            okay++;
-                        }
-                        else
-                        {
-                            Log_Box.Text += (string)FindResource("Failed") + "\n";
-                            fail++;
-                            failParts.Append(item.Name);
-                        }
-                        Log_Box.ScrollToEnd();
+                        LogFail("Failed");
+                        fail++;
+                        failParts.Add(flashName);
                     }
-                    break;
-                //case FirmwareType.UpdateApp:
-                //    UpdateApp.FlashUpdateApp(fb, Partitions, Log_Box, FindResource);
-                //    break;
-                //case FirmwareType.Image:
-                //    ImageFile.FlashImageFiles(fb, Partitions, Log_Box, FindResource);
-                //    break;
-                default:
-                    MessageBox.Show((string)FindResource("UnknownFirmwareType"), (string)FindResource("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-                    break;
+                }
+                finally
+                {
+                    stream?.Close();
+                    stream?.Dispose();
+                }
+                Log_Box.ScrollToEnd();
             }
             Log_Box.Text += string.Format((string)FindResource("FlashStatistic"), sum, okay, fail) + "\n";
-            if (failParts.Length > 0)
+            if (failParts.Count > 0)
             {
                 Log_Box.Text += (string)FindResource("FlashFailPart") + "\n";
                 foreach (var failPart in failParts)
@@ -247,11 +292,26 @@ namespace FastbootFlasher
                     Log_Box.ScrollToEnd();
                 }
             }
-            Log_Box.Text += (string)FindResource("Disconnect") + "\n\r";
-            fb.Disconnect();
-            EnableControl();
             Log_Box.ScrollToEnd();
+        }
+        private string Res(string key) => (string)FindResource(key);
 
+        private void LogStart(string key, string name)
+        {
+            Log_Box.Text += $"{string.Format(Res(key), name)}   ";
+        }
+
+        private void LogSuccess(string key, string? name = null)
+        {
+            if (name == null)
+                Log_Box.Text += $"{Res(key)}\n";
+            else
+                Log_Box.Text += $"{string.Format(Res(key), name)}   {Res("Successful")}\n";
+        }
+
+        private void LogFail(string key)
+        {
+            Log_Box.Text += $"{Res(key)}\n";
         }
 
         private async void ExtractSelectedPart_Click(object sender, RoutedEventArgs e)
