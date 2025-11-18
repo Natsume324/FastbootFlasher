@@ -36,4 +36,5 @@
     <sys:String x:Key="ExtractFinished">All selected partitions have been extracted to the images folder!</sys:String>
     <sys:String x:Key="Disconnect">Disconnected</sys:String>
     <sys:String x:Key="SkippingPartition">Skip flashing the {0} partition...</sys:String>
+    <sys:String x:Key="MergingSperImage">Two super images detected, synthesis begins...</sys:String>
 </ResourceDictionary>

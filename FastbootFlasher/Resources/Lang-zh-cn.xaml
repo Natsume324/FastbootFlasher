@@ -37,4 +37,5 @@
     <sys:String x:Key="Disconnect">断开连接</sys:String>
     <sys:String x:Key="RebootingDevice">重启设备...</sys:String>
     <sys:String x:Key="SkippingPartition">跳过刷入{0}分区...</sys:String>
+    <sys:String x:Key="MergingSperImage">检测到两个super镜像，开始合成...</sys:String>
 </ResourceDictionary>

@@ -30,7 +30,7 @@ namespace FastbootFlasher
         public MainWindow()
         {
             InitializeComponent();
-            SwitchLanguage("zh-cn");
+            SwitchLanguage("en-us");
             Partitions = new ObservableCollection<Partition>();
             DataContext = this;
         }
@@ -233,13 +233,21 @@ namespace FastbootFlasher
                                 stream?.Close();
                                 stream?.Dispose();
                                 LogStart("ExtractingPartition", flashName);
-                                if (await UpdateApp.ExtractPartitionImage(flashName, part.SourceFile, progress))
+                                if (await UpdateApp.ExtractPartitionImage(part.Index, part.SourceFile, progress))
                                 {
                                     LogSuccess("Successful");
                                 }
                                 else
                                 {
                                     LogFail("Failed");
+                                }
+                                if (File.Exists($@".\images\super.1.img") && File.Exists($@".\images\super.2.img"))
+                                {
+                                    Log_Box.Text += (string)FindResource("MergingSperImage") + "   ";
+                                    await UpdateApp.MergerSperImage(progress);
+                                    Log_Box.Text += (string)FindResource("Successful") + "\n";
+                                    File.Delete($@".\images\super.1.img");
+                                    File.Delete($@".\images\super.2.img");
                                 }
                                 part.SourceFile = @$".\images\{part.Name}.img";
                             }
@@ -255,10 +263,12 @@ namespace FastbootFlasher
                             part.SourceFile = @$".\images\{part.Name}.img";
                             break;
                     }
+                    if (File.Exists($@".\images\super.1.img"))
+                        continue;
 
                     // ---- 执行刷写 ----
                     LogStart("FlashingPartition", flashName);
-
+                    
                     response = stream != null&& stream.Length < fb.GetMaxDownloadSize()
                         ? await fb.FlashPartition(flashName, stream, progress)
                         : await fb.FlashPartition(flashName, part.SourceFile, progress);
@@ -398,7 +408,7 @@ namespace FastbootFlasher
             foreach (var item in PartitionDataGrid.SelectedItems.Cast<Partition>())
             {
                 Log_Box.Text += string.Format((string)FindResource("ExtractingPartition"), item.Name) + "   ";
-                result = await UpdateApp.ExtractPartitionImage(item.Name, item.SourceFile, progress);
+                result = await UpdateApp.ExtractPartitionImage(item.Index, item.SourceFile, progress);
                 if (result)
                 {
                     Log_Box.Text += (string)FindResource("Successful") + "\n";
@@ -408,6 +418,14 @@ namespace FastbootFlasher
                     Log_Box.Text += (string)FindResource("Failed") + "\n";
                 }
                 Log_Box.ScrollToEnd();
+            }
+            if (File.Exists($@".\images\super.1.img") && File.Exists($@".\images\super.2.img"))
+            {
+                Log_Box.Text += (string)FindResource("MergingSperImage") + "   ";
+                await UpdateApp.MergerSperImage(progress);
+                Log_Box.Text += (string)FindResource("Successful") + "\n";
+                File.Delete($@".\images\super.1.img");
+                File.Delete($@".\images\super.2.img");
             }
             Log_Box.Text += "\n" + (string)FindResource("ExtractFinished") + "\n\r";
             Log_Box.ScrollToEnd();
