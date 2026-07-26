@@ -12,8 +12,8 @@ namespace FastbootFlasher
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            string langfile = "./lang.ini";
-            string fbfile = "./tools/fastboot.exe";
+            string langfile = Path.Combine(AppContext.BaseDirectory, "lang.ini");
+            string fbfile = FastbootCmd.ExecutablePath;
 
             if (!File.Exists(langfile))
             {

@@ -7,25 +7,34 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>logo.ico</ApplicationIcon>
+    <Version>1.9.0</Version>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
+    <Product>fastboot刷写者 Ver1.9</Product>
     <Platforms>AnyCPU;x64;x86;ARM32;ARM64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="logo.ico" />
+    <Content Include="lang.ini" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\harmony-fastboot-win64\fastboot.exe" Link="tools\fastboot.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\harmony-fastboot-win64\AdbWinApi.dll" Link="tools\AdbWinApi.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\harmony-fastboot-win64\AdbWinUsbApi.dll" Link="tools\AdbWinUsbApi.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\harmony-fastboot-win64\README.txt" Link="tools\README-fastboot.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.31.1" />
-    <PackageReference Include="SharpCompress" Version="0.40.0" />
+    <PackageReference Include="SharpCompress" Version="0.41.0" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="APPLibrary">
-      <HintPath>..\HuaweiUpdateLib\HuaweiUpdateLibrary\bin\Release\APPLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="PayloadLib">
-      <HintPath>..\PayloadLib\bin\Debug\net8.0\PayloadLib.dll</HintPath>
-    </Reference>
+    <Compile Include="..\Dependencies\APPLibrary\Algorithms\*.cs" Link="APPLibrary\Algorithms\%(Filename)%(Extension)" />
+    <Compile Include="..\Dependencies\APPLibrary\Core\*.cs" Link="APPLibrary\Core\%(Filename)%(Extension)" />
+    <Compile Include="..\Dependencies\APPLibrary\Streams\*.cs" Link="APPLibrary\Streams\%(Filename)%(Extension)" />
+    <Compile Include="..\Dependencies\Payload\UpdateMetadata.cs" Link="Payload\UpdateMetadata.cs" />
+    <Compile Include="..\Dependencies\Payload\PayloadBin.cs" Link="Payload\PayloadBin.cs" />
   </ItemGroup>
 
 

@@ -231,13 +231,15 @@ namespace FastbootFlasher
                 
             }
             LogBox.Text += langModel.Log_AllExtracted + "\n\r";
-            if (File.Exists($@".\images\super.1.img"))
+            string[] superFragments = Directory.GetFiles(@".\images", "super.*.img")
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            if (superFragments.Length >= 2)
             {
                 LogBox.Text += langModel.Log_MergingSuper; 
-                await APPFile.MergerSuperSparse();
+                await APPFile.MergerSuperSparse(superFragments);
                 LogBox.Text += "   " + langModel.Log_Success + "\n\r";
-                File.Delete(@".\images\super.1.img");
-                File.Delete(@".\images\super.2.img");
+                foreach (string fragment in superFragments) File.Delete(fragment);
                 
             }
             LogBox.ScrollToEnd();
@@ -444,6 +446,7 @@ namespace FastbootFlasher
                     await APPExtractParts(true);
                     DisabledControls();
                     sum = PartitionList.SelectedItems.Count;
+                    bool superFlashed = false;
                     foreach (var item in PartitionList.SelectedItems.Cast<ListViewItem>())
                     {
                         string partition = item.Part;
@@ -472,10 +475,12 @@ namespace FastbootFlasher
                         if (partition == "ufsfw") partition = "ufs_fw";
                         if (partition == "super")
                         {
+                            if (superFlashed) continue;
                             if (!File.Exists($@".\images\super.img"))
                             {
                                 continue;
                             }
+                            superFlashed = true;
                             LogBox.Text += string.Format(langModel.Log_ErasingPartition, partition) + "\n";
                             outText = await FastbootCmd.Command("erase super");
                             
